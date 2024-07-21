@@ -237,7 +237,10 @@ class Server:
 
     async def async_get_count(self, category):
         """Return number of category in database."""
-        result = await self.async_query(category, "0", "1", "count")
+        if category == "favorites":
+             result = await self.async_query(category, "items")
+        else:
+             result = await self.async_query(category, "0", "1", "count")
         return result["count"]
 
     async def async_query_category(self, category, limit=None, search=None):
@@ -249,9 +252,10 @@ class Server:
             query = ["playlists", "tracks", "0", f"{limit}", search]
             query.append("tags:ju")
             category = "playlisttracks"
+        elif category == "favorites":
+            query = [category, "items" , "0", f"{limit}" , search]
         else:
             query = [category, "0", f"{limit}", search]
-
         if category == "albums":
             query.append("tags:jl")
         elif category == "titles":
@@ -259,14 +263,20 @@ class Server:
             query.append("tags:ju")
 
         result = await self.async_query(*query)
-        if result is None or result.get("count") == 0:
+        if (not result) or (result.get("count") == 0):
             return None
-
         try:
-            items = result[f"{category}_loop"]
+            if category == "favorites":
+                items = result[f"loop_loop"]
+            else:
+                items = result[f"{category}_loop"]
             for item in items:
-                if category != "playlisttracks":
+                if category != "playlisttracks" and category != "favorites":
                     item["title"] = item.pop(category[:-1])
+                elif category == "favorites":
+                    item["title"] = item["name"]
+                    if "image" in item:
+                        item["image_url"] = self.generate_image_url(item["image"])
 
                 if category in ["albums", "titles", "playlisttracks"]:
                     if "artwork_track_id" in item:
