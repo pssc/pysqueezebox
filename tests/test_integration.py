@@ -229,6 +229,7 @@ async def test_browse(lms):
         ("artists", "artist_id"),
         ("genres", "genre_id"),
         ("albums", "album_id"),
+        ("favorite", "favorite_id"),
     ]
 
     for category in categories:
