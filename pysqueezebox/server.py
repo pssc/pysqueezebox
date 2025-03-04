@@ -283,7 +283,7 @@ class Server:
         # newplugins str not always present
         # newplugins': 'Plugins have been updated - Restart Required (BBC Sounds)
         data[UPDATE_PLUGINS_RELEASE_SUMMARY] = (
-            data[STATUS_UPDATE_NEWPLUGINS] + ". "
+            str(data[STATUS_UPDATE_NEWPLUGINS]) + ". "
             if STATUS_UPDATE_NEWPLUGINS in data
             else None
         )
