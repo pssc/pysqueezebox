@@ -668,6 +668,10 @@ class Server:
 
     def generate_image_url(self, image_url: str) -> str:
         """Add the appropriate base_url to a relative image_url."""
+        return self.generate_url(image_url)
+
+    def generate_url(self, rel_url: str) -> str:
+        """Add the appropriate base_url to a relative url."""
         base_url = f"{self._prefix}://"
         if self._username and self._password:
             base_url += urllib.parse.quote(self._username, safe="")
@@ -677,7 +681,7 @@ class Server:
 
         base_url += f"{self.host}:{self.port}/"
 
-        return urllib.parse.urljoin(base_url, image_url)
+        return urllib.parse.urljoin(base_url, rel_url)
 
     def get_track_id_from_image_url(self, image_url: str) -> str | None:
         """Get a track id from an image url."""
